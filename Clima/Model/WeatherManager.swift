@@ -9,7 +9,7 @@
 import Foundation
 
 struct WeatherManager {
-    let weatherURL = "http://api.openweathermap.org/data/2.5/weather?appid=4245b4758713772af64cfa8f881dbd0a&units=metric"
+    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?appid=4245b4758713772af64cfa8f881dbd0a&units=metric"
     
     func fetchWeather(cityName : String) {
         let urlString = "\(weatherURL)&q=\(cityName)"
@@ -18,24 +18,32 @@ struct WeatherManager {
     }
 
     func performRequest(urlString : String)  {
-        //CREATE URL
+        //1. CREATE URL
         
         if let url = URL(string: urlString)
         {
-            //CREATE URLSESSION
+            //2. CREATE URLSESSION
             let session = URLSession(configuration: .default)
             
-            //GIVE THE SESSION TO TASK
-            let task = session.dataTask(with: url, completionHandler: <#T##(Data?, URLResponse?, Error?) -> Void#>)
+            //3. GIVE THE SESSION TO TASK
+            let task = session.dataTask(with: url, completionHandler: handle(data:  response:  error: ))
             
-            //START THE TASK
+            //4. START THE TASK
             task.resume()
         }
     
     }
     
-    func handle (data:Data?, ursSession:URLSession?, error:Error?)
-           {
-               
-           }
+    func handle (data:Data?, response:URLResponse?, error:Error?)
+    {
+        if error != nil {
+            print("**Error - \(error!)")
+        }
+        
+        if let safeData = data{
+            
+            let dataString = String(data: safeData, encoding: .utf8)
+            print(dataString!)
+        }
+    }
 }
