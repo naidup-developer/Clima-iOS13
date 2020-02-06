@@ -8,7 +8,7 @@
 
 import UIKit
 
-class WeatherViewController: UIViewController,UITextFieldDelegate {
+class WeatherViewController: UIViewController {
 
     @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -21,7 +21,7 @@ class WeatherViewController: UIViewController,UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        weatherManager.delegateUpdateWeatherData = self
         searchTextField.delegate = self
     }
 
@@ -30,6 +30,33 @@ class WeatherViewController: UIViewController,UITextFieldDelegate {
         print(searchTextField.text ?? "na")
     }
     
+    
+    
+}
+
+
+//MARK: - Update Weather Data Delegate
+extension WeatherViewController : UpdateWeatherDataDelegate
+{
+    func didFailWithError(_ error: Error!) {
+        print(error as Any)
+    }
+    
+    func didUpdateWeatherData(weather: WeatherModel) {
+        print(weather.conditionName)
+        
+        DispatchQueue.main.async {
+            self.conditionImageView.image = UIImage(systemName: weather.conditionName)
+            self.temperatureLabel.text = weather.temperatureString
+            self.cityLabel.text = weather.cityName
+        }
+    }
+    
+    
+}
+
+//MARK: - TextField Delegate
+extension WeatherViewController : UITextFieldDelegate{
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         searchTextField.endEditing(true)
         print(searchTextField.text ?? "na")
@@ -54,6 +81,5 @@ class WeatherViewController: UIViewController,UITextFieldDelegate {
             return false
         }
     }
-    
 }
 
