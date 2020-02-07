@@ -56,11 +56,19 @@ extension WeatherViewController : UpdateWeatherDataDelegate
         print(weather.conditionName)
         
         DispatchQueue.main.async {
-            self.conditionImageView.image = UIImage(systemName: weather.conditionName)
+            //self.conditionImageView.image = UIImage(systemName: weather.conditionName)
             self.temperatureLabel.text = weather.temperatureString
             self.cityLabel.text = weather.cityName
+            self.weatherManager.fetchImaage(iconName: String(weather.icon), view: self.conditionImageView)
+            
         }
     }
+    
+//    func didUpdateIcon(imageData: Data) {
+//        DispatchQueue.main.async {
+//            self.conditionImageView.image = UIImage(data: imageData)
+//        }
+//    }
     
     
 }
@@ -112,5 +120,7 @@ extension WeatherViewController : CLLocationManagerDelegate
         //
         print("Location error :- \(error)")
     }
+    
+    
 }
 

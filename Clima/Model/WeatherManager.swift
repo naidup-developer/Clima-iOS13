@@ -8,10 +8,12 @@
 
 import Foundation
 import CoreLocation
+import UIKit
 
 protocol UpdateWeatherDataDelegate {
     func didUpdateWeatherData(weather : WeatherModel)
     func didFailWithError(_ error : Error!)
+    //func didUpdateIcon(imageData : Data)
 }
 
 struct WeatherManager {
@@ -68,7 +70,9 @@ struct WeatherManager {
             let id = decodedData.weather[0].id
             let temperature = decodedData.main.temp
             let name = decodedData.name
-            let weather = WeatherModel(conditionId: id, cityName: name, temperature: temperature)
+            let icon = decodedData.weather[0].icon
+        
+            let weather = WeatherModel(conditionId: id, cityName: name, temperature: temperature, icon: icon)
             
             
             return weather
@@ -88,4 +92,39 @@ struct WeatherManager {
                performRequest(urlString: urlString)
     }
     
+    
+    func fetchImaage(iconName : String, view : UIImageView) {
+        
+        let iconURL = "https://openweathermap.org/img/wn/\(iconName)@2x.png"
+        
+        print("image url : \(iconURL)")
+        
+        
+        
+        
+        if let url = URL(string: iconURL)
+               {
+                   //2. CREATE URLSESSION
+                   let session = URLSession(configuration: .default)
+                   
+                   //3. GIVE THE SESSION TO TASK
+                let task = session.dataTask(with: url) { (data, response, error) in
+                    print(data as Any)
+                    if let safeData = data{
+                        //self.delegateUpdateWeatherData?.didUpdateIcon(imageData: safeData)
+                        DispatchQueue.main.async {
+                            view.image = UIImage(data: safeData)
+                        }
+                        
+                        
+                    }
+                    
+                }
+                   
+                   //4. START THE TASK
+                   task.resume()
+        }
+        
+        
+    }
 }
